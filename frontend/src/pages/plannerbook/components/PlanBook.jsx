@@ -1,0 +1,53 @@
+import React, { useEffect } from 'react'
+import '../style/PlanBook.scss'
+import { useNavigate } from 'react-router-dom'
+import { useDispatch, useSelector } from 'react-redux';
+import { setSelectedProduct } from '../../../redux/productsSlice';
+
+function PlanBook() {
+    const productCategories = ["Wedding", "Management", "Guest Management"]
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
+
+    const { photoBooksProducts } = useSelector(store => store.product)
+
+    // console.log(photoBooksProducts)
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
+
+    return (
+        <div className="planner-book">
+            <h2 className="planner-title">Planner Books</h2>
+
+            <div className="categories">
+                {productCategories.map((category, index) => (
+                    <span key={index} className="category-item">
+                        {category}
+                        {index < productCategories.length - 1 && <span className="divider">|</span>}
+                    </span>
+                ))}
+                view all
+            </div>
+
+            <div className="product-grid">
+                {photoBooksProducts?.slice(0, 5).map((c, index) => (
+                    // <ProductCard key={index} />
+                    <div className="product-card" onClick={() => {
+                        navigate(`/product/view/${c._id}`);
+                        dispatch(setSelectedProduct(c));
+                    }} key={index} >
+                        <div className="pc_card_container">
+                            <div className="product-design">
+                                <img src={c?.image[0]} alt="" />
+                            </div>
+                        </div>
+                        <div className="product-title">"{c?.name}"</div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+export default PlanBook

@@ -1,0 +1,280 @@
+$primary-color: #653100;
+$secondary-color: #fef3c7;
+$text-color: white;
+$breakpoint-mobile: 768px;
+
+.navbar {
+  background-color: $primary-color;
+  color: $text-color;
+  padding: 0.75rem 5%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  min-height: 6rem;
+  position: relative;
+  z-index: 1000;
+
+  &-logo {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    
+    img {
+      height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &-toggle {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 2.5rem;
+    height: 2rem;
+    position: relative;
+    z-index: 1001;
+
+    @media (max-width: $breakpoint-mobile) {
+      display: flex;
+    }
+
+    &.open {
+      .burger-line {
+        &:nth-child(1) {
+          transform: translateY(0.7rem) rotate(45deg);
+        }
+        &:nth-child(2) {
+          opacity: 0;
+        }
+        &:nth-child(3) {
+          transform: translateY(-0.7rem) rotate(-45deg);
+        }
+      }
+    }
+
+    .burger-line {
+      display: block;
+      height: 0.25rem;
+      width: 100%;
+      background-color: $text-color;
+      border-radius: 0.25rem;
+      transition: all 0.3s ease;
+    }
+  }
+
+  &-links {
+    display: flex;
+    gap: 1.5rem;
+    font-size: 1.1rem;
+    font-weight: 200;
+    align-items: center;
+
+    @media (max-width: $breakpoint-mobile) {
+      flex-direction: column;
+      width: 100%;
+      gap: 0;
+      margin-top: 1rem;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out;
+      position: absolute;
+      top: 6rem;
+      left: 0;
+      background-color: darken($primary-color, 5%);
+      z-index: 1000;
+
+      &.active {
+        max-height: 100vh;
+        padding: 1rem 5%;
+        overflow-y: auto;
+      }
+    }
+
+    .navbar-item {
+      position: relative;
+
+      @media (max-width: $breakpoint-mobile) {
+        width: 100%;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .navbar-button {
+        background: none;
+        border: none;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        padding: 0.5rem 0;
+        white-space: nowrap;
+
+        &:hover {
+          text-decoration: underline;
+        }
+
+        .dropdown-arrow {
+          margin-left: 0.25rem;
+          font-size: 0.75rem;
+          transition: transform 0.3s ease;
+
+          @media (max-width: $breakpoint-mobile) {
+            margin-left: auto;
+          }
+        }
+
+        &[aria-expanded="true"] .dropdown-arrow {
+          transform: rotate(180deg);
+        }
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background-color: white;
+        color: $primary-color;
+        min-width: 12rem;
+        border-radius: 0.375rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 10;
+        transform-origin: top;
+        animation: fadeIn 0.2s ease-out;
+
+        @media (max-width: $breakpoint-mobile) {
+          position: static;
+          width: 100%;
+          box-shadow: none;
+          border-radius: 0;
+          background-color: darken($primary-color, 10%);
+          color: $text-color;
+          display: none;
+          animation: none;
+
+          &.active {
+            display: block;
+          }
+        }
+
+        .dropdown-item {
+          display: block;
+          padding: 0.75rem 1rem;
+          text-decoration: none;
+          color: inherit;
+          transition: background-color 0.2s;
+
+          &:hover {
+            background-color: $secondary-color;
+            color: $primary-color;
+
+            @media (max-width: $breakpoint-mobile) {
+              background-color: rgba(255, 255, 255, 0.1);
+              color: $text-color;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &-auth {
+    display: flex;
+    gap: 0.75rem;
+    margin-left: 1rem;
+
+    @media (max-width: $breakpoint-mobile) {
+      flex-direction: column;
+      width: 100%;
+      margin: 1rem 0 0 0;
+      gap: 0.5rem;
+    }
+
+    .login-btn,
+    .signup-btn,
+    .welcome-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1rem;
+      font-weight: 500;
+      white-space: nowrap;
+
+      @media (max-width: $breakpoint-mobile) {
+        width: 100%;
+        text-align: center;
+        padding: 0.75rem;
+      }
+    }
+
+    .login-btn {
+      border: 1px solid $text-color;
+      background: transparent;
+      color: $text-color;
+
+      &:hover {
+        background-color: $text-color;
+        color: $primary-color;
+      }
+    }
+
+    .signup-btn {
+      background-color: $text-color;
+      color: $primary-color;
+      border: 1px solid $text-color;
+
+      &:hover {
+        background-color: $secondary-color;
+        border-color: $secondary-color;
+      }
+    }
+
+    .welcome-btn {
+      background-color: transparent;
+      border: 1px solid $text-color;
+      color: $text-color;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      &:hover {
+        background-color: $text-color;
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Ensure the navbar stays on top of other elements
+.navbar {
+  position: relative;
+  z-index: 1000;
+}
+
+// Smooth transitions for mobile menu
+@media (max-width: $breakpoint-mobile) {
+  .navbar-links {
+    transition: max-height 0.3s ease-out, padding 0.3s ease;
+  }
+  
+  .dropdown-menu {
+    transition: max-height 0.3s ease-out;
+  }
+}

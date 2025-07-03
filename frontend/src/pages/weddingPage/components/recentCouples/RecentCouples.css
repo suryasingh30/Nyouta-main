@@ -1,0 +1,97 @@
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&display=swap');
+
+.couples-section {
+  width: 80vw;
+  padding: 40px 10px;
+  text-align: center;
+  font-family: sans-serif;
+  background-color: #fff;
+}
+
+.banner {
+  background-color: #fbeedb;
+  padding: 2px;
+  font-size: 2.3rem;
+  font-family: "EB Garamond", serif;
+  font-style: italic;
+  font-weight: bold;
+  margin-bottom: 2rem;
+}
+
+.section-heading {
+  color: #b95c2b;
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+}
+
+.couples-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.couple-card {
+  width: 240px;
+  height: 260px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.card-inner {
+  width: 80%;
+  text-align: center;
+}
+
+.photo {
+  width: 90px;
+  height: 75px;
+  background-color: #eee;
+  margin: 0 auto 10px;
+}
+
+.name {
+  background-color: #e91e63;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 4px 0;
+}
+
+.place {
+  font-size: 13px;
+  margin-top: 3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .couple-card {
+    width: 130px;
+    height: 160px;
+  }
+
+  .photo {
+    width: 70px;
+    height: 45px;
+  }
+
+  .name, .place {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .couples-grid {
+    gap: 16px;
+  }
+
+  .couple-card {
+    width: 120px;
+    height: 150px;
+  }
+}

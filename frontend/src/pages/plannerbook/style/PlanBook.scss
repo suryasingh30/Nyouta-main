@@ -1,0 +1,82 @@
+.planner-book {
+  margin-bottom: 4rem;
+  padding: 1rem;
+
+  .planner-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #ec4899;
+    margin-bottom: 1.5rem;
+  }
+
+  .categories {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+
+    .category-item {
+      font-size: 0.875rem;
+      color: #374151;
+
+      .divider {
+        margin-left: 1rem;
+        color: #9ca3af;
+      }
+    }
+  }
+
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 1.5rem;
+
+    @media (min-width: 768px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    @media (min-width: 1024px) {
+      grid-template-columns: repeat(5, 1fr);
+    }
+  }
+
+  .product-card {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+
+    .pc_card_container {
+      background-color: #FBF0DC;
+      border-radius: 0.5rem;
+      box-shadow: 0 0px 15px rgba(0, 0, 0, 0.349);
+      overflow: hidden;
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0;
+
+      .product-design {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+    }
+
+    .product-title {
+      margin-top: 0.5rem;
+      font-size: 0.875rem;
+      color: #53290F;
+      text-align: center;
+    }
+  }
+}

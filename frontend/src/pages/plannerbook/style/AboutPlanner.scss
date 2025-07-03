@@ -1,0 +1,31 @@
+.aboutplanner{
+    // border: 2px solid red;
+    margin-top: 3rem;
+
+    display: flex;
+    align-items: center;
+}
+
+.about_container{
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+
+    .aboutheading{
+        h2{
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+    }
+}
+
+.about_nav{
+    ul{
+        display: flex;
+        flex-direction: column;
+
+        li{
+            cursor: pointer;
+        }
+    }
+}

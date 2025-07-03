@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@400;500&family=Playfair+Display:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+    <title><%= (home && home.name) ? home.name:"Groom"%> & <%= (home && home.partnerName)? home.partnerName:"Bride" %></title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Playfair Display", serif;
+      }
+
+      .container {
+        max-width: 1700px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4rem;
+        padding: 4rem 5rem;
+      }
+
+      .floral-image {
+        flex: 1;
+        max-width: 50%;
+      }
+
+      .floral-image img {
+        width: 50%;
+
+        object-fit: contain;
+      }
+
+      .wedding-details {
+        flex: 1;
+        text-align: center;
+      }
+
+      .title {
+        color: #4b6aa9;
+        margin-bottom: 0.5rem;
+      }
+
+      .title h1 {
+        font-size: 4rem;
+        font-weight: 400;
+      }
+
+      .title h1 span {
+        font-family: "Great Vibes", cursive;
+        font-size: 5rem;
+      }
+
+      .ceremony {
+        color: #4b6aa9;
+        font-size: 1.75rem;
+        letter-spacing: 0.2em;
+        margin-bottom: 2rem;
+      }
+
+      .names-container {
+        position: relative;
+        padding: 2rem 0;
+        margin: 2rem 0;
+      }
+
+      .names-container::before,
+      .names-container::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: #4b6aa9;
+        opacity: 0.3;
+      }
+
+      .names-container::before {
+        top: 0;
+      }
+
+      .names-container::after {
+        bottom: 0;
+      }
+
+      .names {
+        font-family: "Great Vibes", cursive;
+        color: #e0447b;
+        font-size: 4rem;
+        line-height: 1.2;
+      }
+
+      .date-time {
+        color: #e0447b;
+        font-family: "Montserrat", sans-serif;
+        letter-spacing: 0.1em;
+        line-height: 1.6;
+      }
+
+      .date-time p {
+        font-size: 1.25rem;
+      }
+      .flower img {
+        height: 400px;
+      }
+      .flower-wed img {
+        height: 500px;
+      }
+      h1 {
+        font-family: "Great Vibes", cursive;
+      }
+      .about {
+        width: 50%;
+      }
+      .story {
+        width: 50%;
+      }
+      .form-div{
+        width: 33%;
+      }
+      @media only screen and (max-width: 480px) {
+        .container-mob{
+          flex-direction: column;
+          padding: 1rem 5px;
+        }
+        .container-mob h1{
+          font-size: 3rem;
+        }
+        .container-mob h2{
+          font-size: 2rem;
+        }
+        .about{
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <% 
+function formatTime(timeString) {
+    const [hour, minute] = timeString.split(':').map(Number);
+    const period = hour >= 12 ? 'PM' : 'AM'; // Change to 'PM'/'AM'
+    const formattedHour = hour % 12 || 12; // Convert 0 to 12 for 12-hour format
+    return `${formattedHour}:${minute.toString().padStart(2, '0')} ${period}`; // Format to "HH:MM AM/PM"
+}
+%>
+<% 
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = {  month: 'long' };
+            const day = date.getDate();
+            // Function to get the ordinal suffix
+            function getOrdinalSuffix(day) {
+                if (day > 3 && day < 21) return 'th'; // Covers 11th to 19th
+                switch (day % 10) {
+                    case 1: return 'st';
+                    case 2: return 'nd';
+                    case 3: return 'rd';
+                    default: return 'th';
+                }
+            }
+        
+            const dayWithSuffix = day + getOrdinalSuffix(day);
+            return `${date.toLocaleDateString('en-US', options)} ${dayWithSuffix}, ${date.getFullYear()}`;
+        }
+        %>
+    <section id="section-1">
+      <div class="container container-mob">
+        <div class="floral-image">
+          <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" />
+        </div>
+        <div class="wedding-details">
+          <div class="title">
+            <h1><span>W</span>EDDING</h1>
+          </div>
+          <div class="ceremony">CEREMONY</div>
+          <div class="names-container">
+            <div class="names"><%= (home && home.name) ? home.name:"Groom"%> & <%= (home && home.partnerName)? home.partnerName:"Bride" %></div>
+          </div>
+          <div class="date-time">
+            <p class=""><%=(home&&home.weddingDate)?formatDate(home.weddingDate):'October 23rd, 2025'%></p>
+            <p>| <%= ((eventInfo && eventInfo.time) ? formatTime(eventInfo.time) : '3:00 PM') %> |</p>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="section-2">
+      <div class="bg-blue-200 px-8 py-4 flex justify-between items-center container-mob">
+        <div class="flex flex-col gap-24">
+          <div class="flex flex-col items-center gap-2">
+            <h1 class="text-6xl">Save the Date</h1>
+            <h2 class="text-2xl"><%=(home&&home.weddingDate)?formatDate(home.weddingDate):'October 23rd, 2025'%></h2>
+            <p class="text-xl border-l-2 inline border-r-2 px-2 border-red-600">
+              <%= ((eventInfo && eventInfo.time) ? formatTime(eventInfo.time) : '3:00 PM') %>
+            </p>
+          </div>
+          <div class="flex flex-col items-center">
+            <h3 class="text-2xl">VENUE</h3>
+            <h3 class="text-2xl"><%=(eventInfo && eventInfo.venue&&eventInfo.venue.address) ?eventInfo.venue.address:'Lernerra Luxury Resort 123 Anywhere St., Any City, ST' %></h3>
+          </div>
+        </div>
+
+        <div>
+          <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654545/c3_lp8zpe.png" alt="" />
+        </div>
+
+        <div class="flex lg:flex-col">
+          <h1 class="text-6xl"><%= (home && home.partnerName)? home.partnerName:"Bride" %></h1>
+          <span class="text-5xl">&</span>
+          <h1 class="text-6xl"><%= (home && home.name) ? home.name:"Groom"%></h1>
+        </div>
+
+        <div class="flower">
+          <img class="" src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+        </div>
+      </div>
+    </section>
+
+    <section id="section-3">
+      <div class="flex py-8 px-24 justify-between container-mob">
+        <div class="flex flex-col about items-center gap-4">
+          <h1 class="text-6xl">About Us</h1>
+          <p class="text-center">
+            <%=(about && about.groom && about.groom.description) ? about.groom.description : "What can I say, she is amazing. Brilliant, creative, and adventurous. I have always been a little bit shy, and she has shown me a whole new side of life. I never want to go back to the way life was before I met her. She is my forever." %>
+          </p>
+          <p class="text-center">
+            <%=(about && about.bride && about.bride.description) ? about.bride.description : "We’re so excited to celebrate this next chapter of our love storywith the people who mean the most to us—our family and friends. Your love, support, and blessings have shaped our lives in more ways than we can express, and having you by our side as we say “I do” makes this day even more special." %>
+            
+          </p>
+          <h2><%= (home && home.name) ? home.name:"Groom"%> & <%= (home && home.partnerName)? home.partnerName:"Bride" %>   </h2>
+        </div>
+        <div class="flower">
+          <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+        </div>
+      </div>
+    </section>
+    <section id="section-4">
+      <div class="flex justify-between items-center px-40 py-8 container-mob">
+        <div class="flower">
+          <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+        </div>
+        <div class="story flex flex-col items-center gap-4">
+          <h1 class="text-6xl">Our Story</h1>
+          <h2 class="text-center text-2xl text-blue-700">
+            <%= (ourStory && ourStory.description) ? ourStory.description : "For our three year anniversary we wanted to re-create our first date. We went to the coffee shop where we met, and then to the small movie theater next door. Instead of a movie, he surprised me with a theater full of friends and family then proposed on stage. It is so meaningful to us to share this special day with our most cherished friends and family. We sincerely hope we will have the honor to dine, laugh, and dance with you on our wedding weekend. It would mean the world to us." %>
+          </h2>
+        </div>
+      </div>
+    </section>
+    <section id="section-5">
+      <div class="container-mob flex justify-between items-center px-24 py-16 bg-blue-200">
+        <div class="flower-wed">
+          <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+        </div>
+        <div class="about flex flex-col items-center gap-6">
+          <h1 class="text-6xl text-pink-600">Wedding Programs</h1>
+          <div class="space-y-2 flex flex-col items-center">
+            <h2 class="lg:text-3xl text-xl text-pink-600">Monday, 21ST APRIL, 2025</h2>
+            <h3 class="lg:text-xl text-lg text-blue-600">Event-1 NAME - TIME</h3>
+            <h3 class="lg:text-xl text-lg text-blue-600">Event-2 NAME - TIME</h3>
+            <h2 class="lg:text-xl text-lg text-pink-700">VENUE: VENUE NAME HERE</h2>
+          </div>
+          <div class="space-y-2 flex flex-col items-center">
+            <h2 class="lg:text-3xl text-xl text-pink-600">Monday, 21ST APRIL, 2025</h2>
+            <h3 class="lg:text-xl text-lg text-blue-600">Event-1 NAME - TIME</h3>
+            <h3 class="lg:text-xl text-lg text-blue-600">Event-2 NAME - TIME</h3>
+            <h2 class="lg:text-xl text-lg text-pink-700">VENUE: VENUE NAME HERE</h2>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="section-6">
+      <div class="container-mob flex justify-between px-40 py-16">
+        <div class="flex flex-col items-center">
+          <h1 class="text-6xl">Event Name</h1>
+          <div class="space-y-2 flex flex-col items-center">
+            <h2 class="text-3xl text-pink-800">Monday, 21ST APRIL, 2025</h2>
+            <h3 class="text-xl text-blue-600">Event-1 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-2 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-3 NAME - TIME</h3>
+            <img class="w-20" src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654819/c5_nkagil.jpg" alt="" />
+            <h2 class="text-xl text-pink-800">VENUE: VENUE NAME HERE</h2>
+          </div>
+        </div>
+        <div class="flower">
+          <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+        </div>
+        <div class="flex flex-col items-center">
+          <h1 class="text-6xl">Event Name</h1>
+          <div class="space-y-2 flex flex-col items-center">
+            <h2 class="text-3xl text-pink-800">Monday, 21ST APRIL, 2025</h2>
+            <h3 class="text-xl text-blue-600">Event-1 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-2 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-3 NAME - TIME</h3>
+            <img class="w-20" src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654819/c5_nkagil.jpg" alt="" />
+            <h2 class="text-xl text-pink-800">VENUE: VENUE NAME HERE</h2>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="section-7">
+      <div class="container-mob flex items-center justify-between py-16 px-40">
+        <div class="flower">
+          <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+        </div>
+        <div>
+          <h1 class="text-6xl text-pink-800">
+            Wedding <br />
+            Timeline
+          </h1>
+        </div>
+        <div>
+          <div class="">
+            <h2 class="text-3xl text-pink-600">Monday, 21ST APRIL, 2025</h2>
+            <h3 class="text-xl text-blue-600">Event-1 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-2 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-3 NAME - TIME</h3>
+          </div>
+          <div class="">
+            <h2 class="text-3xl text-pink-600">Monday, 21ST APRIL, 2025</h2>
+            <h3 class="text-xl text-blue-600">Event-1 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-2 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-3 NAME - TIME</h3>
+          </div>
+          <div class="">
+            <h2 class="text-3xl text-pink-600">Monday, 21ST APRIL, 2025</h2>
+            <h3 class="text-xl text-blue-600">Event-1 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-2 NAME - TIME</h3>
+            <h3 class="text-xl text-blue-600">Event-3 NAME - TIME</h3>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="section-8">
+      <div class="container-mob py-10 space-y-4 px-40 bg-blue-200">
+        <h2 class="text-4xl text-center text-pink-600">WEDDING VENUE</h2>
+        <div class="flex justify-between container-mob">
+          <div class="flower">
+            <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+          </div>
+          <div class="flex flex-col justify-between items-center">
+            <h2 class="text-3xl text-center text-blue-700">
+              <h4><%=(eventInfo && eventInfo.venue&&eventInfo.venue.address) ?eventInfo.venue.address:'Lernerra Luxury Resort 123 Anywhere St., Any City, ST' %>
+            </h2>
+            <img class="w-48" src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737655025/c6_nzcplz.jpg" alt="" />
+          </div>
+          <div class="flower">
+            <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="section-9">
+      <div class="container-mob flex items-center justify-between px-40 py-16">
+        <div class="flower">
+          <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+        </div>
+        <div class="flex flex-col gap-8 items-center">
+          <div class="flex flex-col items-center">
+            <h2 class="text-3xl text-pink-600">AWAITING YOUR PRESENSE</h2>
+            <h3 class="text-2xl">EDIT NAME HERE 1</h3>
+            <h3 class="text-2xl">EDIT NAME HERE 2</h3>
+            <h3 class="text-2xl">EDIT NAME HERE 3</h3>
+          </div>
+          <div class="flex flex-col items-center">
+            <h2 class="text-3xl text-pink-600">Our Residence</h2>
+            <h3 class="text-2xl text-center"><h4><%=(eventInfo && eventInfo.venue&&eventInfo.venue.address) ?eventInfo.venue.address:'Lernerra Luxury Resort 123 Anywhere St., Any City, ST' %></h3>
+          </div>
+          <div class="flex flex-col items-center">
+            <h2 class="text-3xl text-pink-600">Contact Numbers</h2>
+            <h3 class="text-2xl">+91 XXXXXXXXXX</h3>
+          </div>
+        </div>
+        <div class="flower">
+            <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="" />
+          </div>
+      </div>
+    </section>
+    <section id="section-10">
+        <div class="container-mob flex justify-between items-center px-40 py-16 bg-blue-200">
+            <div class="flower">
+                <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="">
+            </div>
+            <div>
+                <h2 class="text-4xl text-center text-pink-800">Your presence will make our <br> wedding day even more meaningful <br> and unforgettable</h2>
+            </div>
+            <div class="flower">
+                <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654489/c2_hszmm6.png" alt="">
+            </div>
+        </div>
+    </section>
+    <section id="section-11">
+        <div class="container-mob py-16 px-24 space-y-4">
+            <h1 class="text-6xl text-pink-800 text-center">Photo Gallery</h1>
+            <div class="flex gap-8 justify-center flex-col lg:flex-row">
+              <% if (gallery && gallery.photos && gallery.photos.length > 0) { %>
+                <div class="flex flex-wrap justify-center">
+                  <% gallery.photos.forEach(function(photo, index) { %>
+                    <img class="w-64 m-2" src="<%= photo %>" alt="">
+                  <% }); %>
+                </div>
+            <% } else { %>
+              <img class="w-64 mx-auto" src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737655115/wed1_x1x9uo.jpg" alt="">
+              <img class="w-64 mx-auto" src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737655158/wed2_jrrsej.jpg" alt="">
+              <img class="w-64 mx-auto" src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737655207/wed3_sigwpr.jpg" alt="">
+              <img class="w-64 mx-auto" src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737655245/wed4_lebflo.jpg" alt="">
+            <% } %>
+                
+            </div>
+            <h2 class="text-2xl text-pink-800 text-center">Celebration Summary</h2>
+        </div>
+    </section>
+    <section id="section-12">
+        <div class="px-24 py-16 container-mob">
+            <h2 class="text-6xl text-center text-pink-800">RSVP</h2>
+            <form action="" class="px-40 space-y-4 container-mob">
+                <div class="flex flex-col lg:flex-row gap-4">
+                    <div class="flex flex-col gap-2 form-div">
+                        <label class="text-xl" for="">Full Name</label>
+                        <input class="border-2 px-1 py-2 rounded-md" type="text" placeholder="Enter you name">
+                    </div>
+                    <div class="flex flex-col gap-2 form-div">
+                        <label class="text-xl" for="">Full Address</label>
+                        <input class="border-2 px-1 py-2 rounded-md" type="text" placeholder="Enter you address">
+                    </div>
+                    <div class="flex flex-col gap-2 form-div">
+                        <label class="text-xl" for="">Mobile Number</label>
+                        <input class="border-2 px-1 py-2 rounded-md" type="text" placeholder="Enter you number">
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <label class="text-xl" for="">Response:</label>
+                    <input type="checkbox">Accept with pleasure</input>
+                </div>
+                <button class="text-pink-800 text-xl border-2 px-24 py-2 hover:bg-pink-500 hover:text-black duration-300">Submit</button>
+            </form>
+        </div>
+    </section>
+    <section id="section-13">
+        <div class="flex flex-col gap-8 justify-center items-center container-mob">
+            <h1 class="text-6xl text-blue-700">Creating Special For Special Day</h1>
+            <img src="https://res.cloudinary.com/dr6qk9jr8/image/upload/v1737654585/c4_uldilv.png" alt="">
+            <h2 class="text-4xl">NYOUTA.COM</h2>
+        </div>
+    </section>
+  </body>
+</html>
