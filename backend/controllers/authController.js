@@ -2,28 +2,55 @@ import jwt from 'jsonwebtoken';
 import nodemailer from 'nodemailer';
 import User from '../models/User.js';
 import dotenv from 'dotenv';
-import fetch from 'node-fetch';
+import bcrypt from 'bcryptjs';
 
 dotenv.config();
 
-// Nodemailer setup
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp-relay.brevo.com',
+  port: 587,
   auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
+    user: process.env.BREVO_EMAIL,
+    pass: process.env.BREVO_SMTP_KEY,
   },
 });
+console.log(process.env.BREVO_EMAIL);
 
-// Generate OTP
+// Verify connection on startup
+transporter.verify((error) => {
+  if (error) {
+    console.error('Brevo SMTP Connection Failed:', error);
+  } else {
+    console.log('Brevo SMTP is ready');
+  }
+});
+
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
+
+// Improved email sending function
+const sendVerificationEmail = async (email, name, otp) => {
+  try {
+    const info = await transporter.sendMail({
+      from: `"Nyouta App" <${process.env.BREVO_EMAIL}>`,
+      to: email,
+      subject: 'Verify Your Email',
+      html: `<p>Your OTP: <strong>${otp}</strong></p>`,
+    });
+    console.log('Email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Brevo Email Error:', error.response || error);
+    return false;
+  }
+};
 
 export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
+    // Validations
     if (!email || !password || !name) {
-      return res.status(400).json({ message: "All fields (email, password, name) are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,158 +59,113 @@ export const register = async (req, res) => {
     }
 
     if (password.length < 6) {
-      return res.status(400).json({ message: "Password must be at least 6 characters long" });
+      return res.status(400).json({ message: "Password must be at least 6 characters" });
     }
 
     let existingUser = await User.findOne({ email });
-
     const otp = generateOTP();
 
     if (existingUser) {
       if (existingUser.isVerified) {
-        return res.status(400).json({ message: 'User already registered. Please log in.' });
+        return res.status(400).json({ message: 'User already exists. Please login.' });
       }
 
       const now = Date.now();
-      if (existingUser.otpGeneratedAt && now - existingUser.otpGeneratedAt < 60 * 1000) {
-        return res.status(429).json({ message: 'Please wait 1 minute before requesting a new OTP.' });
+      if (existingUser.otpGeneratedAt && now - existingUser.otpGeneratedAt < 60000) {
+        return res.status(429).json({ message: 'Please wait 1 minute before new OTP' });
       }
 
       existingUser.otp = otp;
       existingUser.otpGeneratedAt = now;
       await existingUser.save();
 
-      await transporter.sendMail({
-        from: process.env.EMAIL_USER,
-        to: existingUser.email,
-        subject: 'Verify Your Email Address',
-        html: `
-          <p>Hello ${existingUser.name},</p>
-          <p>Please verify your email by entering the OTP below:</p>
-          <h2>${otp}</h2>
-          <p>This OTP is valid for 10 minutes.</p>
-        `,
-      });
+      await sendVerificationEmail(email, name, otp);
 
-      return res.status(201).json({
-        message: 'OTP re-sent. Please verify your email.',
-        requiresOtp: true,
+      return res.status(200).json({ 
+        message: 'OTP re-sent',
+        requiresOtp: true 
       });
     }
 
     const newUser = new User({
       name,
       email,
-      password,
+      password: await bcrypt.hash(password, 10),
       otp,
       otpGeneratedAt: Date.now(),
       isVerified: false,
     });
 
     await newUser.save();
-
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Verify Your Email Address',
-      html: `
-        <p>Hello ${name},</p>
-        <p>Thank you for registering. Please verify your email by entering the OTP below:</p>
-        <h2>${otp}</h2>
-        <p>This OTP is valid for 10 minutes.</p>
-      `,
-    });
+    await sendVerificationEmail(email, name, otp);
 
     res.status(201).json({
-      message: 'User registered successfully. Please verify your email.',
+      message: 'Registration successful. Verify your email.',
       requiresOtp: true,
     });
 
   } catch (error) {
     console.error("Registration error:", error);
-    res.status(500).json({ message: 'Something went wrong. Please try again later.' });
+    res.status(500).json({ message: 'Server error. Please try again.' });
   }
 };
 
-// Login user
+
 export const login = async (req, res) => {
-  console.log("you are here");
   try {
     const { email, password } = req.body;
 
-    // Basic validations
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
 
-    // Find user by email
     const user = await User.findOne({ email });
     if (!user) {
-      return res.status(401).json({ message: 'User not found' });
+      return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // If user is not verified, re-send OTP
     if (!user.isVerified) {
       const now = Date.now();
-
-      // Optional: throttle OTP re-sending
-      if (!user.otpGeneratedAt || now - user.otpGeneratedAt > 60 * 1000) {
+      if (!user.otpGeneratedAt || now - user.otpGeneratedAt > 60000) {
         const otp = generateOTP();
         user.otp = otp;
         user.otpGeneratedAt = now;
         await user.save();
-
-        await transporter.sendMail({
-          from: process.env.EMAIL_USER,
-          to: user.email,
-          subject: 'Verify Your Email Address',
-          html: `
-            <p>Hello ${user.name},</p>
-            <p>Please verify your email by entering the OTP below:</p>
-            <h2>${otp}</h2>
-            <p>This OTP is valid for 10 minutes.</p>
-          `,
-        });
+        await sendVerificationEmail(email, user.name, otp);
       }
-
-      return res.status(403).json({ message: 'Email not verified. OTP sent again.', requiresOtp: true });
+      return res.status(403).json({ 
+        message: 'Email not verified. OTP sent again.', 
+        requiresOtp: true 
+      });
     }
 
-    // Validate password
-    const isMatch = await user.comparePassword(password);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
 
-    // Generate JWT
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // Extract user fields to return
-    const { _id, name, email: userEmail, role, isWebsiteCreated, websitePassword } = user;
+    // Omit sensitive data from response
+    const userResponse = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isWebsiteCreated: user.isWebsiteCreated
+    };
 
-    res.status(200).json({
-      token,
-      user: {
-        _id,
-        name,
-        email: userEmail,
-        role,
-        isWebsiteCreated,
-        websitePassword,
-      },
-    });
+    res.status(200).json({ token, user: userResponse });
   } catch (error) {
     console.error("Login error:", error);
     res.status(500).json({ message: 'Something went wrong. Please try again.' });
   }
 };
 
-
-// Verify OTP 
 export const verifyEmail = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -193,7 +175,6 @@ export const verifyEmail = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
-
     if (!user) {
       return res.status(404).json({ error: 'User not found.' });
     }
@@ -206,36 +187,34 @@ export const verifyEmail = async (req, res) => {
       return res.status(400).json({ error: 'Invalid OTP.' });
     }
 
-    const otpExpirationTime = 10 * 60 * 1000; // 10 minutes
+    const otpExpirationTime = 10 * 60 * 1000;
     if (!user.otpGeneratedAt || Date.now() - user.otpGeneratedAt > otpExpirationTime) {
       return res.status(400).json({ error: 'OTP has expired. Please request a new one.' });
     }
 
-    // Mark as verified
     user.isVerified = true;
     user.otp = null;
     user.otpGeneratedAt = null;
     await user.save();
 
-    // Create JWT token
     const token = jwt.sign(
       { userId: user._id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '1h' }
     );
 
-    // Return token & user data
+    const userResponse = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      isWebsiteCreated: user.isWebsiteCreated
+    };
+
     res.status(200).json({
       message: 'Email verified successfully.',
       token,
-      user: {
-        _id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        isWebsiteCreated: user.isWebsiteCreated,
-        websitePassword: user.websitePassword,
-      },
+      user: userResponse
     });
   } catch (error) {
     console.error('Email verification error:', error);
