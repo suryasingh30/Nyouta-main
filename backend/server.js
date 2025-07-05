@@ -34,22 +34,29 @@ app.use(morgan("tiny"));
 const allowedOrigins = [
   process.env.FRONTEND_URL,
   'http://localhost:3000',
-  'http://localhost:5173'
+  'http://localhost:5173',
+  'https://nyouta.com'
 ].filter(Boolean);
 
 const corsOption = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error('CORS not allowed from this origin: ' + origin));
+      console.warn(`Blocked by CORS: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
     }
   },
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   credentials: true,
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 
 app.use(cors(corsOption));
+app.options('*', cors(corsOption)); // Enable preflight for all routes
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -81,4 +88,8 @@ app.listen(PORT, '0.0.0.0', () => {
 // Test route
 app.get('/', (req, res) => {
     res.send('API is working correctly.');
+});
+
+app.get("/api/v1/ping", (req, res) => {
+  res.send("pong");
 });
